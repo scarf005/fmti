@@ -20,4 +20,16 @@ Deno.test(function nestedIndent() {
   assertEquals(abcd, 'A---\n B--\n  C-\n   D')
 })
 
-Deno.test(function kotlinTrimIndent() {})
+Deno.test(function kotlinTrimIndent() {
+  const a = `
+    |Hello
+    |World
+  `
+  assertEquals(fmti`
+  """
+    ${a}
+
+    ${a}
+  """.trimIndent()
+  `, '"""\n|Hello\n|World\n\n|Hello\n|World\n""".trimIndent()')
+})

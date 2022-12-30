@@ -1,4 +1,5 @@
 import dedent from 'npm:dedent-js'
+import { dropWhileBoth } from './dropWhile.ts'
 
 const isWhitespace = (s: string) => s.trim() === ''
 const isNotWhitespace = (s: string) => !isWhitespace(s)
@@ -8,19 +9,6 @@ const indent = (s: string, indent: number) =>
     .split('\n')
     .map(line => ' '.repeat(indent) + line)
     .join('\n')
-
-const dropWhile = <T>(arr: readonly T[], predicate: (t: T) => boolean) => {
-  const index = arr.findIndex(x => !predicate(x))
-  return index === -1 ? arr : arr.slice(index)
-}
-
-const dropWhileEnd = <T>(arr: readonly T[], predicate: (t: T) => boolean) => {
-  const index = arr.findLastIndex(x => !predicate(x))
-  return index === -1 ? arr : arr.slice(0, index + 1)
-}
-
-const dropWhileBoth = <T>(sx: readonly T[], predicate: (t: T) => boolean) =>
-  dropWhileEnd(dropWhile(sx, predicate), predicate)
 
 const trimEmptyLines = (s: string) =>
   dropWhileBoth(s.split('\n'), isWhitespace).join('\n')
@@ -61,15 +49,28 @@ export const fmti = (
 }
 
 if (import.meta.main) {
+  const d = 'D'
+  const cd = fmti`
+  C-
+   ${d}
+`
+  const abcd = fmti`
+    A---
+     B--
+      ${cd}
+  `
   const a = `
     |Hello
     |World
   `
   console.log(fmti`
-  fun doStuff() {
+    """
     ${a}
 
     ${a}
-  }
+    """.trimIndent()
   `)
+
+  console.log(cd)
+  console.log(abcd)
 }
